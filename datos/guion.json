@@ -1,0 +1,72 @@
+[
+  [
+    "1",
+    "Martin",
+    "0:00–0:35",
+    "Presentación",
+    "LOGISTPULSE recibe pedidos, aparta inventario y mueve productos por la planta. Nuestro trabajo pone reglas claras a esos pasos. Usamos autómatas para impedir eventos fuera de orden, Dijkstra para las rutas y FEFO para elegir lotes. Después analizamos diez correos y distinguimos entre encontrar una respuesta y comprobarla."
+  ],
+  [
+    "2",
+    "Martin",
+    "0:35–1:35",
+    "Pedido",
+    "El estado indica en qué parte del proceso estamos y el evento indica qué acaba de ocurrir. La cadena crpedt confirma, reserva, inicia picking, empaca, despacha y entrega. Por eso se acepta. La cadena crd intenta despachar después de reservar y cae en Error. F contiene Entregado y Cancelado porque ambos cierran el pedido. Aceptar una cadena significa que el trámite terminó de forma permitida. No significa que siempre hubo una entrega."
+  ],
+  [
+    "3",
+    "Martin",
+    "1:35–2:20",
+    "Reserva y compra",
+    "Una reserva se valida, se confirma y recién después se consume. También puede liberarse o expirar. En compra hay que pedir aprobación antes de emitir la orden. Permitimos varias recepciones parciales y cerramos cuando se completa la cantidad. Los autómatas revisan el orden de eventos. Los controles de stock y cantidades ocurren antes de emitir esos eventos. Probamos 19 secuencias con el motor de JFLAP."
+  ],
+  [
+    "4",
+    "Isaac",
+    "2:20–3:20",
+    "Ruta",
+    "Cada zona es un vértice y cada pasillo es una arista con su distancia. Empezamos en R. Dijkstra primero llega a B con costo 2 y mejora A a 3. Desde A encuentra E a 8 y luego D a 11. El código devuelve R, B, A, E, D. La ruta de la consigna pasa por P y también cuesta 11. El algoritmo conserva la primera opción cuando hay empate. No usamos BFS porque un pasillo no equivale siempre a la misma distancia."
+  ],
+  [
+    "5",
+    "Sol",
+    "3:20–4:20",
+    "FEFO",
+    "Pedimos ocho unidades. Primero descartamos un lote vencido y otro vacío. A01 y A02 vencen el mismo día, así que el código decide el empate. Tomamos tres de A01, cuatro de A02 y una de B01. Ordenar cuesta L log L y después recorremos cada lote como máximo una vez. Si falta stock, el plan parcial sirve para explicar el faltante, pero no confirmamos una reserva incompleta."
+  ],
+  [
+    "6",
+    "Sol",
+    "4:20–5:00",
+    "Reposición",
+    "La posición es disponible más en orden menos reservado. En el ejemplo: 18 más 10 menos 5 da 23. Como el mínimo es 30, sugerimos 50 menos 23: 27 unidades. Cuando se crea la compra, esas 27 pasan a en orden. La siguiente consulta ve posición 50 y no vuelve a sugerir la compra. El cálculo se repite una vez por producto."
+  ],
+  [
+    "7",
+    "Emily",
+    "5:00–6:05",
+    "P y NP",
+    "Los tres primeros correos tienen algoritmos polinómicos conocidos. En otros cuatro demostramos NP mostrando un certificado y un verificador polinómico. Eso no demuestra que sean NP-completos ni que estén fuera de P. P está incluido en NP. En el correo de factorización buscamos un divisor de 91 hasta 10: encontramos 7. Verificarlo solo exige comprobar el rango y que 91 dividido por 7 deje residuo cero."
+  ],
+  [
+    "8",
+    "Emily",
+    "6:05–7:05",
+    "Un caso NP completo",
+    "El último correo quiere cubrir corredores. En A, B, C basta poner el equipo en B, porque toca ambas aristas. Para demostrar NP-completitud usamos Independent Set. Si un grupo S no tiene aristas internas, todas las aristas tienen por lo menos un extremo fuera de S. Su complemento es una cobertura. Si S tiene al menos t nodos, el complemento tiene a lo sumo V menos t. La transformación conserva el grafo, es polinómica y funciona en ambos sentidos."
+  ],
+  [
+    "9",
+    "Isaac",
+    "7:05–8:10",
+    "Demostración",
+    "Ejecutamos python -m codigo.demo. Señalamos planta con 11 metros, FEFO con 3, 4 y 1 unidades, reposición con 27 y certificado de cobertura B verificado. Después ejecutamos python -m unittest discover -s tests -v. OK significa que las 61 pruebas cumplen lo esperado. Mostramos una prueba inválida: un peso negativo genera ValueError. Eso evita usar Dijkstra fuera de sus condiciones."
+  ],
+  [
+    "10",
+    "Emily",
+    "8:10–9:00",
+    "Límite computacional",
+    "Decidible significa que existe un procedimiento que siempre termina con una respuesta correcta. No garantiza que termine pronto. El TSP pequeño puede decidirse enumerando rutas, pero con 21 centros quedan 20 factorial opciones. El problema de la parada es distinto: no existe un decisor general para programas arbitrarios y sus entradas. Un programa tiene código finito, pero puede repetir un bucle para siempre. En nuestro proyecto sí justificamos por qué termina cada búsqueda."
+  ]
+]

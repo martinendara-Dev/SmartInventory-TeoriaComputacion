@@ -1,0 +1,403 @@
+[
+  {
+    "id": "p1",
+    "cls": "P",
+    "title": "Pedidos alcanzables desde la planta",
+    "from": "Daniela Paredes · Planificación",
+    "subject": "¿Puede llegar el envío a la zona Norte?",
+    "problem": "Dada una red de rutas activas, determina si existe un camino desde la Planta Durán hasta la Zona Norte.",
+    "algo": "BFS",
+    "dec": "Decidible",
+    "comp": "Una búsqueda finita visita cada vértice a lo sumo una vez; devuelve Sí si alcanza el destino y No al agotar la cola.",
+    "complex": "O(V + E) en tiempo y O(V) en espacio con listas de adyacencia.",
+    "code": "from collections import deque\n\ndef alcanzable(grafo, origen, destino):\n    visitados = {origen}\n    cola = deque([origen])\n    while cola:\n        u = cola.popleft()\n        if u == destino:\n            return True\n        for v in grafo.get(u, []):\n            if v not in visitados:\n                visitados.add(v)\n                cola.append(v)\n    return False\n\nred = {'Durán':['Quito','Guayaquil'], 'Quito':['Norte'], 'Guayaquil':[]}\nprint(alcanzable(red, 'Durán', 'Norte'))",
+    "data": [
+      [
+        "Durán",
+        "Quito"
+      ],
+      [
+        "Durán",
+        "Guayaquil"
+      ],
+      [
+        "Quito",
+        "Norte"
+      ],
+      [
+        "Guayaquil",
+        "Sur"
+      ]
+    ],
+    "task": "Implementa BFS y prueba al menos un caso alcanzable y uno no alcanzable.",
+    "email": {
+      "time": "08:12",
+      "priority": "Alta · despacho de mañana",
+      "to": "Jefatura de Operaciones",
+      "cc": "Control de despacho",
+      "body": "<p>Buenos días,</p><p>El cliente de la zona Norte confirmó una ventana de recepción entre las 10:00 y las 12:00. Antes de liberar el pedido, necesitamos confirmar si hoy existe una secuencia de tramos habilitados desde la Planta Durán hasta esa zona. El cierre de vías de anoche pudo dejar una conexión fuera de servicio.</p><p>En el portal encontrarás el mapa de rutas activas y en la consola están los tramos reportados por Transporte. Por favor responde con un “sí” o “no”, explica qué procedimiento usarías para comprobarlo en toda la red y adjunta un programa que podamos ejecutar con una lista de conexiones. Incluye un ejemplo de prueba con ruta disponible y otro sin ruta.</p><p>Si confirmas el acceso, coordinamos el camión con el cliente. Gracias.</p>"
+    }
+  },
+  {
+    "id": "p2",
+    "cls": "P",
+    "title": "Ruta de menor tiempo",
+    "from": "Marco Cedeño · Transporte",
+    "subject": "Ruta mínima entre centros de distribución",
+    "problem": "Con tiempos de viaje no negativos, encuentra el tiempo mínimo desde CD Quito hasta cada nodo y reconstruye la ruta a CD Guayaquil.",
+    "algo": "Dijkstra",
+    "dec": "Decidible",
+    "comp": "El algoritmo termina porque procesa una cantidad finita de nodos/aristas y cada distancia mejora un número finito de veces.",
+    "complex": "O((V + E) log V) con cola de prioridad y listas de adyacencia.",
+    "code": "import heapq\n\ndef dijkstra(grafo, origen):\n    dist = {v: float('inf') for v in grafo}\n    dist[origen] = 0\n    previo = {}\n    cola = [(0, origen)]\n    while cola:\n        d, u = heapq.heappop(cola)\n        if d != dist[u]:\n            continue\n        for v, peso in grafo[u]:\n            nd = d + peso\n            if nd < dist[v]:\n                dist[v] = nd\n                previo[v] = u\n                heapq.heappush(cola, (nd, v))\n    return dist, previo\n\ng = {'Quito':[('Latacunga',2),('Ambato',5)], 'Latacunga':[('Guayaquil',6)], 'Ambato':[('Guayaquil',3)], 'Guayaquil':[]}\nprint(dijkstra(g, 'Quito')[0])",
+    "data": [
+      [
+        "Quito",
+        "Latacunga",
+        2
+      ],
+      [
+        "Quito",
+        "Ambato",
+        5
+      ],
+      [
+        "Latacunga",
+        "Guayaquil",
+        6
+      ],
+      [
+        "Ambato",
+        "Guayaquil",
+        3
+      ]
+    ],
+    "task": "Codifica Dijkstra. Explica por qué no sirve si hay pesos negativos.",
+    "email": {
+      "time": "08:37",
+      "priority": "Alta · corte de transporte 09:00",
+      "to": "Coordinación de Transporte",
+      "cc": "Finanzas · combustible",
+      "body": "<p>Hola,</p><p>El proveedor cambió los tiempos estimados por obras en la vía. Necesito comparar el tiempo mínimo de traslado desde CD Quito hasta CD Guayaquil antes del corte de asignación de vehículos. Los tiempos cargados en la tabla son no negativos y algunas conexiones no son directas.</p><p>Devuélveme el recorrido sugerido y su costo total en tiempo, además de indicar qué información debe conservar el sistema para reconstruir la ruta. Adjunta el código y una prueba pequeña. Si consideras otra técnica, justifica por qué sus supuestos aplican a estos datos.</p><p>Con esa recomendación asignaremos el camión refrigerado de la mañana.</p>"
+    }
+  },
+  {
+    "id": "p3",
+    "cls": "P",
+    "title": "Capacidad máxima de despacho",
+    "from": "Luis Vaca · Distribución",
+    "subject": "Máximo de camiones hacia clientes",
+    "problem": "Calcula el máximo flujo de camiones por día desde la planta hasta los clientes respetando las capacidades de cada tramo.",
+    "algo": "Edmonds–Karp",
+    "dec": "Decidible",
+    "comp": "Termina; BFS halla caminos aumentantes y la capacidad entera aumenta al menos una unidad. La variante tiene una cota polinomial independiente del valor numérico de capacidades.",
+    "complex": "O(V·E²) para Edmonds–Karp.",
+    "code": "from collections import deque\n\ndef edmonds_karp(cap, s, t):\n    # cap[u][v] = capacidad residual; completar la búsqueda BFS,\n    # hallar cuello de botella, actualizar aristas directas e inversas.\n    residual = {u: dict(vs) for u, vs in cap.items()}\n    flujo = 0\n    while True:\n        padre = {s: None}\n        q = deque([s])\n        while q and t not in padre:\n            u = q.popleft()\n            for v, c in residual[u].items():\n                if c > 0 and v not in padre:\n                    padre[v] = u\n                    q.append(v)\n        if t not in padre:\n            return flujo\n        cuello = float('inf')\n        v = t\n        while v != s:\n            u = padre[v]\n            cuello = min(cuello, residual[u][v])\n            v = u\n        v = t\n        while v != s:\n            u = padre[v]\n            residual[u][v] -= cuello\n            residual.setdefault(v, {})[u] = residual.get(v, {}).get(u, 0) + cuello\n            v = u\n        flujo += cuello",
+    "data": [
+      [
+        "Planta",
+        "Quito",
+        7
+      ],
+      [
+        "Planta",
+        "Guayaquil",
+        5
+      ],
+      [
+        "Quito",
+        "Clientes",
+        4
+      ],
+      [
+        "Guayaquil",
+        "Clientes",
+        6
+      ],
+      [
+        "Quito",
+        "Guayaquil",
+        2
+      ]
+    ],
+    "task": "Completa/explica el código Edmonds–Karp y calcula el flujo máximo.",
+    "email": {
+      "time": "09:05",
+      "priority": "Crítica · contingencia de capacidad",
+      "to": "Distribución Nacional",
+      "cc": "Centro de Control · Servicio al Cliente",
+      "body": "<p>Equipo,</p><p>Una falla temporal redujo la operación del CD Quito. Servicio al Cliente solicita saber cuántos camiones por día todavía pueden llegar desde Planta Durán hasta la zona de clientes sin exceder la capacidad de ningún tramo.</p><p>Revisa las capacidades actuales en la red del portal. Necesito el máximo que puede despacharse bajo esas restricciones y un registro reproducible de cómo se actualizan los tramos usados y disponibles. Incluye el algoritmo en código y explica cuánto crece su trabajo al aumentar nodos y conexiones.</p><p>La cifra se usará para comunicar compromisos; no asumamos que la suma de capacidades de salida equivale al flujo que realmente llega.</p>"
+    }
+  },
+  {
+    "id": "n1",
+    "cls": "NP",
+    "title": "¿Existe isomorfismo entre dos redes?",
+    "from": "Elena Ruiz · Arquitectura",
+    "subject": "Comparar topologías equivalentes",
+    "problem": "Dadas dos redes como grafos, decide si existe una correspondencia uno a uno entre nodos que preserve las aristas (isomorfismo de grafos).",
+    "algo": "Búsqueda exhaustiva de permutaciones",
+    "dec": "Decidible",
+    "comp": "Es computable: se enumeran las biyecciones finitas y se verifica si preservan adyacencia. La solución propuesta funciona, aunque no es práctica para redes grandes.",
+    "complex": "O(n! · n²) con enumeración ingenua; pertenecer a NP no significa que se conozca un algoritmo polinomial.",
+    "code": "from itertools import permutations\n\ndef isomorfos(A, B):\n    n = len(A)\n    if len(B) != n:\n        return False\n    for p in permutations(range(n)):\n        if all(A[i][j] == B[p[i]][p[j]]\n               for i in range(n) for j in range(n)):\n            return True\n    return False\n\nA = [[0,1,0],[1,0,1],[0,1,0]]\nB = [[0,1,1],[1,0,0],[1,0,0]]\nprint(isomorfos(A, B))",
+    "data": [
+      [
+        "Red A",
+        "3 nodos",
+        "2 enlaces"
+      ],
+      [
+        "Red B",
+        "3 nodos",
+        "2 enlaces"
+      ],
+      [
+        "Pregunta",
+        "¿Misma estructura?",
+        "Sí/No"
+      ]
+    ],
+    "task": "Explica qué certificado puede presentar quien responde “sí” y cómo se verifica.",
+    "email": {
+      "time": "09:42",
+      "priority": "Media · migración programada",
+      "to": "Arquitectura de Red",
+      "cc": "Infraestructura · Operaciones",
+      "body": "<p>Buenos días,</p><p>Esta noche se migrará la configuración de dos redes de centros logísticos. Los nombres de los equipos cambiaron durante el inventario y el equipo de campo no puede confirmar si ambas topologías tienen la misma estructura de conexiones.</p><p>Determina si existe una correspondencia uno a uno entre sus nodos que preserve todas las conexiones. Si la respuesta es afirmativa, necesitamos poder revisar esa correspondencia como evidencia. Prepara un programa que pruebe el caso del expediente y un análisis de cómo escala al crecer el número de nodos.</p><p>La migración se aprueba solo después de confirmar que la estructura se conserva.</p>"
+    }
+  },
+  {
+    "id": "n2",
+    "cls": "NP",
+    "title": "Encontrar un factor de un entero",
+    "from": "Andrés Molina · Seguridad",
+    "subject": "¿Tiene N un factor en este intervalo?",
+    "problem": "Dados enteros N y B en binario, decide si N tiene un divisor d con 2 ≤ d ≤ B. Un certificado “sí” es d; se comprueba dividiendo N por d.",
+    "algo": "Prueba por división exhaustiva",
+    "dec": "Decidible",
+    "comp": "Se puede resolver probando todos los d hasta B; además, el certificado d tiene longitud polinomial y se verifica con multiplicación/división. No se conoce aquí una cota polinomial en log N para la búsqueda exhaustiva.",
+    "complex": "O(B · M(log N)) con prueba directa (M(k): costo de multiplicar k bits); exponencial en el tamaño binario si B≈√N.",
+    "code": "def factor_en_rango(N, B):\n    for d in range(2, B + 1):\n        if N % d == 0:\n            return d\n    return None\n\nN, B = 91, 10\nd = factor_en_rango(N, B)\nprint('factor:', d)\n# Verificador de certificado\ndef verificar(N, B, d):\n    return 2 <= d <= B and N % d == 0",
+    "data": [
+      [
+        "N",
+        "91",
+        "representación binaria"
+      ],
+      [
+        "B",
+        "10",
+        "cota superior"
+      ],
+      [
+        "Certificado",
+        "d",
+        "d divide N y 2≤d≤B"
+      ]
+    ],
+    "task": "Diferencia el tiempo de encontrar un certificado del tiempo de verificarlo.",
+    "email": {
+      "time": "10:16",
+      "priority": "Alta · revisión de seguridad",
+      "to": "Seguridad de Plataformas",
+      "cc": "Auditoría TI",
+      "body": "<p>Hola,</p><p>El proveedor de dispositivos RFID nos envió un identificador numérico N y el equipo de auditoría pregunta si tiene un divisor distinto de 1 dentro del límite B indicado en el expediente. No se debe modificar ni publicar el identificador; el análisis es local y con datos de prueba.</p><p>Necesito que plantees una rutina que encuentre un divisor cuando exista y otra rutina separada que valide un divisor propuesto. Compara el costo de buscarlo con el de verificarlo, teniendo presente que los números se reciben en representación binaria.</p><p>Adjunta el código y el resultado para el N y B de la consola.</p>"
+    }
+  },
+  {
+    "id": "n3",
+    "cls": "NP",
+    "title": "Logaritmo discreto acotado",
+    "from": "Paola León · Seguridad TI",
+    "subject": "¿Existe exponente x que produzca h?",
+    "problem": "Dados p primo, g, h y B, decide si existe x entre 0 y B tal que g^x ≡ h (mod p). El certificado es x y la exponenciación modular lo verifica eficientemente.",
+    "algo": "Búsqueda exhaustiva con exponenciación modular",
+    "dec": "Decidible",
+    "comp": "Computable por enumeración finita; un x candidato se verifica en tiempo polinomial en el tamaño binario de p y B usando exponenciación rápida.",
+    "complex": "B exponenciaciones modulares; búsqueda O(B·log B·M(log p)); el certificado se verifica en tiempo polinomial en log p + log B.",
+    "code": "def discreto_acotado(p, g, h, B):\n    valor = 1\n    for x in range(B + 1):\n        if valor == h:\n            return x\n        valor = (valor * g) % p\n    return None\n\nprint(discreto_acotado(23, 5, 8, 10))\n\ndef verificar(p, g, h, B, x):\n    return 0 <= x <= B and pow(g, x, p) == h",
+    "data": [
+      [
+        "p",
+        "23",
+        "primo"
+      ],
+      [
+        "g",
+        "5",
+        "base"
+      ],
+      [
+        "h",
+        "8",
+        "objetivo"
+      ],
+      [
+        "B",
+        "10",
+        "exponente máximo"
+      ]
+    ],
+    "task": "Implementa búsqueda y verificador separado; indica el costo de ambos.",
+    "email": {
+      "time": "10:48",
+      "priority": "Restringida · análisis criptográfico",
+      "to": "Equipo de Seguridad Aplicada",
+      "cc": "Responsable de llaves",
+      "body": "<p>Buenos días,</p><p>Durante la validación de un token de integración, el laboratorio entregó los parámetros públicos p, g y h, junto con un límite B para el exponente de prueba. Para el entorno didáctico, debemos determinar si existe un exponente permitido que reproduzca el valor h mediante aritmética modular.</p><p>Por favor, separa claramente el procedimiento de búsqueda del verificador de una respuesta candidata. Incluye el código, una prueba reproducible y el análisis del costo de cada etapa. Usa solamente los parámetros ficticios de esta estación.</p><p>El informe se compartirá con el responsable de llaves antes de habilitar el conector.</p>"
+    }
+  },
+  {
+    "id": "n4",
+    "cls": "NP",
+    "title": "Automorfismo no trivial de una red",
+    "from": "Santiago Jaramillo · Analítica",
+    "subject": "¿La topología tiene una simetría?",
+    "problem": "Decide si un grafo tiene un automorfismo distinto de la identidad. La permutación de vértices es un certificado y se verifica preservando adyacencias.",
+    "algo": "Permutaciones + verificación de adyacencia",
+    "dec": "Decidible",
+    "comp": "Enumeración finita de permutaciones; para una respuesta afirmativa basta un certificado de tamaño polinomial verificable en tiempo polinomial.",
+    "complex": "O(n!·n²) búsqueda ingenua; verificación de un automorfismo O(n²).",
+    "code": "from itertools import permutations\n\ndef automorfismo_no_trivial(A):\n    n = len(A)\n    identidad = tuple(range(n))\n    for p in permutations(range(n)):\n        if p == identidad:\n            continue\n        if all(A[i][j] == A[p[i]][p[j]]\n               for i in range(n) for j in range(n)):\n            return p\n    return None\n\nA = [[0,1,1],[1,0,1],[1,1,0]]\nprint(automorfismo_no_trivial(A))",
+    "data": [
+      [
+        "Grafo",
+        "3 vértices",
+        "triángulo"
+      ],
+      [
+        "Certificado",
+        "permutación",
+        "no identidad"
+      ],
+      [
+        "Verificación",
+        "comparar pares",
+        "adyacencia preservada"
+      ]
+    ],
+    "task": "Muestra una permutación no identidad o argumenta que no existe.",
+    "email": {
+      "time": "11:23",
+      "priority": "Media · optimización de layout",
+      "to": "Analítica de Operaciones",
+      "cc": "Diseño de Bodegas",
+      "body": "<p>Hola,</p><p>Estamos comparando una plantilla de pasillos con el plano de una bodega piloto. Queremos saber si el plano tiene una simetría real: una reasignación de posiciones que no sea la identidad y que mantenga las mismas adyacencias entre zonas.</p><p>Analiza el grafo cargado en el portal. Si encuentras una simetría, incluye la permutación como certificado y un verificador independiente. Si no, explica cómo concluye tu programa que agotó las opciones.</p><p>Este resultado orientará si podemos reutilizar las reglas de ubicación del layout anterior.</p>"
+    }
+  },
+  {
+    "id": "c1",
+    "cls": "NP-completo",
+    "title": "Satisfacer restricciones de asignación",
+    "from": "Mónica Ruiz · Planificación",
+    "subject": "¿Hay una asignación que cumpla todas las reglas?",
+    "problem": "Modelo SAT: asigna valores verdadero/falso a variables de decisión para satisfacer simultáneamente las restricciones de despacho (fórmula 3-CNF).",
+    "algo": "DPLL / retroceso con poda",
+    "dec": "Decidible",
+    "comp": "Se decide enumerando asignaciones finitas. SAT está en NP y es NP-completo por Cook–Levin; no se conoce algoritmo polinomial general.",
+    "complex": "O(2ⁿ·m) para enumeración directa de n variables y m cláusulas; DPLL mejora casos pero conserva peor caso exponencial.",
+    "code": "def satisface(clauses, asignacion):\n    # Una cláusula contiene literales: x o -x.\n    for clausula in clauses:\n        if not any((asignacion[abs(lit)] == (lit > 0))\n                   for lit in clausula):\n            return False\n    return True\n\ndef sat_bruteforce(clauses, n):\n    from itertools import product\n    for bits in product([False, True], repeat=n):\n        a = {i+1: bits[i] for i in range(n)}\n        if satisface(clauses, a):\n            return a\n    return None",
+    "data": [
+      [
+        "Variables",
+        "x1,x2,x3",
+        "decisiones"
+      ],
+      [
+        "Cláusulas",
+        "(x1∨¬x2)",
+        "(x2∨x3)"
+      ],
+      [
+        "Pregunta",
+        "¿Hay asignación?",
+        "SAT"
+      ]
+    ],
+    "task": "Codifica un solucionador pequeño y explica cómo se verifica una asignación candidata.",
+    "email": {
+      "time": "12:02",
+      "priority": "Alta · cierre de planificación",
+      "to": "Planificación de Turnos",
+      "cc": "Despacho · Recursos Humanos",
+      "body": "<p>Equipo,</p><p>Tenemos que asignar vehículos a franjas de carga. Algunas combinaciones son incompatibles por capacidad, horario o tipo de mercancía; además hay compromisos que deben cumplirse simultáneamente. El caso adjunto resume esas reglas como variables y cláusulas booleanas.</p><p>Determina si hay una asignación que satisfaga todas las reglas. Necesito el horario candidato si existe y una comprobación independiente que permita validar que cumple cada cláusula. Adjunta una implementación de búsqueda y explica cómo cambia el número de posibilidades con la cantidad de decisiones.</p><p>Si no existe una asignación, el equipo deberá renegociar la ventana de despacho.</p>"
+    }
+  },
+  {
+    "id": "c2",
+    "cls": "NP-completo",
+    "title": "Recorrido que visita cada centro una vez",
+    "from": "Jorge Tapia · Ruteo",
+    "subject": "¿Existe una ruta hamiltoniana dentro del presupuesto?",
+    "problem": "Dada una matriz de distancias y un límite L, decide si existe un orden que visite cada centro exactamente una vez, con costo total ≤ L (versión de decisión de TSP).",
+    "algo": "Backtracking / enumerar permutaciones",
+    "dec": "Decidible",
+    "comp": "Se decide enumerando rutas finitas; una ruta candidata se verifica en tiempo polinomial. TSP de decisión es NP-completo.",
+    "complex": "O(n!·n) enumeración ingenua; verificar una ruta O(n).",
+    "code": "from itertools import permutations\n\ndef ruta_dentro(dist, limite):\n    n = len(dist)\n    for ruta in permutations(range(1, n)):\n        camino = (0,) + ruta + (0,)\n        costo = sum(dist[camino[i]][camino[i+1]]\n                    for i in range(n))\n        if costo <= limite:\n            return camino, costo\n    return None\n\nd = [[0,4,8],[4,0,3],[8,3,0]]\nprint(ruta_dentro(d, 20))",
+    "data": [
+      [
+        "Centros",
+        "Planta, Quito, Guayaquil",
+        "n=3"
+      ],
+      [
+        "Distancias",
+        "matriz simétrica",
+        "km"
+      ],
+      [
+        "Límite",
+        "20",
+        "km"
+      ]
+    ],
+    "task": "Implementa la versión de decisión y separa solución de optimización.",
+    "email": {
+      "time": "12:36",
+      "priority": "Alta · promesa al cliente",
+      "to": "Ruteo y Última Milla",
+      "cc": "Servicio al Cliente",
+      "body": "<p>Hola,</p><p>Para la entrega especial de mañana debemos visitar todos los centros incluidos en el manifiesto y regresar al punto de salida. La gerencia fijó un presupuesto máximo de kilómetros L; la pregunta operativa es si existe al menos un recorrido que cumpla ese límite.</p><p>Usa la matriz de distancias del expediente. Devuelve un recorrido válido cuando lo encuentres, su costo y una verificación que podamos ejecutar. El informe debe tratar la pregunta de decisión indicada y distinguirla de pedir directamente el recorrido de menor costo.</p><p>Adjunta el código y comenta el crecimiento de la búsqueda al incorporar más centros.</p>"
+    }
+  },
+  {
+    "id": "c3",
+    "cls": "NP-completo",
+    "title": "Cobertura de zonas con almacenes",
+    "from": "Carla Núñez · Red logística",
+    "subject": "¿Bastan k almacenes para cubrir todas las zonas?",
+    "problem": "Dado un grafo de cobertura y k, decide si existe un conjunto de a lo sumo k almacenes tal que toda zona esté cubierta por un almacén propio o vecino (Vertex Cover).",
+    "algo": "Backtracking / ramificación",
+    "dec": "Decidible",
+    "comp": "El espacio de subconjuntos es finito, por lo que siempre se decide. Vertex Cover está en NP y es NP-completo.",
+    "complex": "O(2ⁿ·(V+E)) con búsqueda por subconjuntos; verificar una cobertura propuesta O(V+E).",
+    "code": "def vertex_cover(grafo, k):\n    vertices = list(grafo)\n    n = len(vertices)\n    for mask in range(1 << n):\n        if mask.bit_count() > k:\n            continue\n        elegidos = {vertices[i] for i in range(n)\n                    if mask & (1 << i)}\n        if all(u in elegidos or v in elegidos\n               for u in grafo for v in grafo[u]):\n            return elegidos\n    return None\n\ng = {'A':['B'], 'B':['A','C'], 'C':['B']}\nprint(vertex_cover(g, 1))",
+    "data": [
+      [
+        "Aristas",
+        "A-B, B-C",
+        "zonas adyacentes"
+      ],
+      [
+        "k",
+        "1",
+        "máximo de almacenes"
+      ],
+      [
+        "Pregunta",
+        "¿Cubre toda arista?",
+        "Sí/No"
+      ]
+    ],
+    "task": "Incluye un verificador polinomial independiente del algoritmo de búsqueda.",
+    "email": {
+      "time": "13:10",
+      "priority": "Media · cobertura de inspecciones",
+      "to": "Continuidad Operativa",
+      "cc": "Seguridad Física · Red de Bodegas",
+      "body": "<p>Buenos días,</p><p>Para el próximo turno solo podemos desplegar hasta k equipos de inspección. El mapa conecta zonas que comparten un corredor de transferencia. Por política, cada corredor debe tener un equipo en al menos uno de sus extremos para que el movimiento quede cubierto.</p><p>Determina si existe una selección de no más de k zonas que cubra todos los corredores. Si existe, entrega la selección como certificado y crea un verificador separado. Incluye una búsqueda que resuelva el expediente y explica cómo varía el esfuerzo cuando crece el mapa.</p><p>Necesitamos la respuesta antes de confirmar el despliegue nocturno.</p>"
+    }
+  }
+]

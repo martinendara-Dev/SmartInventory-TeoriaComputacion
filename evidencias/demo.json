@@ -1,0 +1,186 @@
+{
+  "planta": [
+    [
+      "R",
+      "B",
+      "A",
+      "E",
+      "D"
+    ],
+    11
+  ],
+  "fefo": {
+    "completo": true,
+    "plan": [
+      [
+        "A01",
+        3
+      ],
+      [
+        "A02",
+        4
+      ],
+      [
+        "B01",
+        1
+      ]
+    ],
+    "faltante": 0
+  },
+  "reposicion": [
+    23,
+    27
+  ],
+  "reposicion_tras_orden": [
+    50,
+    0
+  ],
+  "p1": true,
+  "p2": {
+    "distancias": {
+      "Quito": 0,
+      "Latacunga": 2,
+      "Ambato": 5,
+      "Guayaquil": 8
+    },
+    "ruta": [
+      [
+        "Quito",
+        "Latacunga",
+        "Guayaquil"
+      ],
+      8
+    ]
+  },
+  "p3": [
+    10,
+    [
+      {
+        "camino": [
+          "Planta",
+          "Quito",
+          "Clientes"
+        ],
+        "aumento": 4,
+        "total": 4,
+        "residuales": [
+          [
+            "Planta",
+            "Quito",
+            3,
+            4
+          ],
+          [
+            "Quito",
+            "Clientes",
+            0,
+            4
+          ]
+        ]
+      },
+      {
+        "camino": [
+          "Planta",
+          "Guayaquil",
+          "Clientes"
+        ],
+        "aumento": 5,
+        "total": 9,
+        "residuales": [
+          [
+            "Planta",
+            "Guayaquil",
+            0,
+            5
+          ],
+          [
+            "Guayaquil",
+            "Clientes",
+            1,
+            5
+          ]
+        ]
+      },
+      {
+        "camino": [
+          "Planta",
+          "Quito",
+          "Guayaquil",
+          "Clientes"
+        ],
+        "aumento": 1,
+        "total": 10,
+        "residuales": [
+          [
+            "Planta",
+            "Quito",
+            2,
+            5
+          ],
+          [
+            "Quito",
+            "Guayaquil",
+            1,
+            1
+          ],
+          [
+            "Guayaquil",
+            "Clientes",
+            0,
+            6
+          ]
+        ]
+      }
+    ]
+  ],
+  "n1": {
+    "certificado": [
+      1,
+      0,
+      2
+    ],
+    "verificado": true
+  },
+  "n2": {
+    "certificado": 7,
+    "verificado": true
+  },
+  "n3": {
+    "certificado": 6,
+    "verificado": true
+  },
+  "n4": {
+    "certificado": [
+      0,
+      2,
+      1
+    ],
+    "verificado": true
+  },
+  "c1": {
+    "certificado": [
+      false,
+      false,
+      true
+    ],
+    "verificado": true
+  },
+  "c2": {
+    "certificado": [
+      [
+        0,
+        1,
+        2,
+        0
+      ],
+      15
+    ],
+    "verificado": true
+  },
+  "c3": {
+    "certificado": [
+      "B"
+    ],
+    "verificado": true
+  }
+}
