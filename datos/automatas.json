@@ -1,0 +1,300 @@
+{
+  "pedido": {
+    "estados": [
+      "Borrador",
+      "Confirmado",
+      "Reservado",
+      "Preparación",
+      "Empacado",
+      "Despachado",
+      "Entregado",
+      "Cancelado",
+      "Error"
+    ],
+    "finales": [
+      6,
+      7
+    ],
+    "eventos": {
+      "c": "confirmar",
+      "r": "reservar",
+      "p": "iniciar picking",
+      "e": "empacar",
+      "d": "despachar",
+      "t": "entregar",
+      "x": "cancelar"
+    },
+    "transiciones": [
+      [
+        0,
+        "c",
+        1
+      ],
+      [
+        1,
+        "r",
+        2
+      ],
+      [
+        2,
+        "p",
+        3
+      ],
+      [
+        3,
+        "e",
+        4
+      ],
+      [
+        4,
+        "d",
+        5
+      ],
+      [
+        5,
+        "t",
+        6
+      ],
+      [
+        0,
+        "x",
+        7
+      ],
+      [
+        1,
+        "x",
+        7
+      ],
+      [
+        2,
+        "x",
+        7
+      ]
+    ],
+    "pruebas": [
+      [
+        "crpedt",
+        true,
+        "Entrega completa"
+      ],
+      [
+        "crx",
+        true,
+        "Cancelación con liberación de reserva"
+      ],
+      [
+        "d",
+        false,
+        "Borrador no permite despachar"
+      ],
+      [
+        "crd",
+        false,
+        "Faltan picking y empaque"
+      ],
+      [
+        "cr",
+        false,
+        "Secuencia incompleta, termina en Reservado"
+      ],
+      [
+        "crpedtx",
+        false,
+        "No se cancela después de entregar"
+      ]
+    ]
+  },
+  "reserva": {
+    "estados": [
+      "Solicitada",
+      "Validada",
+      "Reservada",
+      "Consumida",
+      "Liberada",
+      "Expirada",
+      "Rechazada",
+      "Error"
+    ],
+    "finales": [
+      3,
+      4,
+      5,
+      6
+    ],
+    "eventos": {
+      "v": "validar",
+      "c": "confirmar",
+      "p": "consumir por picking",
+      "l": "liberar por cancelación",
+      "e": "expirar plazo",
+      "s": "rechazar por falta de stock"
+    },
+    "transiciones": [
+      [
+        0,
+        "v",
+        1
+      ],
+      [
+        1,
+        "c",
+        2
+      ],
+      [
+        2,
+        "p",
+        3
+      ],
+      [
+        2,
+        "l",
+        4
+      ],
+      [
+        2,
+        "e",
+        5
+      ],
+      [
+        0,
+        "s",
+        6
+      ]
+    ],
+    "pruebas": [
+      [
+        "vcp",
+        true,
+        "Consumo de reserva confirmada"
+      ],
+      [
+        "vcl",
+        true,
+        "Liberación por cancelación"
+      ],
+      [
+        "p",
+        false,
+        "No se consume sin reserva"
+      ],
+      [
+        "vp",
+        false,
+        "Falta confirmar"
+      ],
+      [
+        "vce",
+        true,
+        "Expira el plazo de reserva"
+      ],
+      [
+        "s",
+        true,
+        "Falta de stock cierra el proceso válidamente"
+      ],
+      [
+        "sp",
+        false,
+        "Una reserva rechazada no se consume"
+      ]
+    ]
+  },
+  "compra": {
+    "estados": [
+      "Borrador",
+      "En aprobación",
+      "Aprobada",
+      "Enviada",
+      "Recepción parcial",
+      "Recibida",
+      "Rechazada",
+      "Error"
+    ],
+    "finales": [
+      5,
+      6
+    ],
+    "eventos": {
+      "s": "solicitar aprobación",
+      "a": "aprobar",
+      "r": "rechazar",
+      "e": "emitir orden",
+      "p": "recibir parte",
+      "c": "completar recepción"
+    },
+    "transiciones": [
+      [
+        0,
+        "s",
+        1
+      ],
+      [
+        1,
+        "a",
+        2
+      ],
+      [
+        1,
+        "r",
+        6
+      ],
+      [
+        2,
+        "e",
+        3
+      ],
+      [
+        3,
+        "p",
+        4
+      ],
+      [
+        4,
+        "p",
+        4
+      ],
+      [
+        3,
+        "c",
+        5
+      ],
+      [
+        4,
+        "c",
+        5
+      ]
+    ],
+    "pruebas": [
+      [
+        "saec",
+        true,
+        "Recepción completa directa"
+      ],
+      [
+        "saeppc",
+        true,
+        "Dos recepciones parciales y cierre"
+      ],
+      [
+        "sre",
+        false,
+        "Rechazada no permite emitir"
+      ],
+      [
+        "sec",
+        false,
+        "Falta aprobar"
+      ],
+      [
+        "sr",
+        true,
+        "Rechazo cierra el trámite"
+      ],
+      [
+        "saep",
+        false,
+        "Recepción aún incompleta"
+      ]
+    ]
+  }
+}

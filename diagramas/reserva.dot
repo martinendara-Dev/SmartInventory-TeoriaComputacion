@@ -1,0 +1,15 @@
+digraph G { rankdir=LR; graph [bgcolor="white",ranksep=.45,nodesep=.35]; node [shape=ellipse,fontname="DejaVu Sans",fontsize=11,color="#55718d",style=filled,fillcolor="#f3f7fb"]; edge [fontname="DejaVu Sans",fontsize=10,color="#55718d"]; start [shape=point]; start -> q0;
+q0 [label="q0\nSolicitada",peripheries=1];
+q1 [label="q1\nValidada",peripheries=1];
+q2 [label="q2\nReservada",peripheries=1];
+q3 [label="q3\nConsumida",peripheries=2];
+q4 [label="q4\nLiberada",peripheries=2];
+q5 [label="q5\nExpirada",peripheries=2];
+q6 [label="q6\nRechazada",peripheries=2];
+q0 -> q1 [label="v"];
+q1 -> q2 [label="c"];
+q2 -> q3 [label="p"];
+q2 -> q4 [label="l"];
+q2 -> q5 [label="e"];
+q0 -> q6 [label="s"];
+}

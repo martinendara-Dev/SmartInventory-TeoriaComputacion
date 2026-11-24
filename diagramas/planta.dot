@@ -1,0 +1,20 @@
+graph G { graph [bgcolor="white"]; node [shape=ellipse,fontname="DejaVu Sans",fontsize=15,style=filled,fillcolor="#f3f7fb",color="#55718d"]; edge [fontname="DejaVu Sans",fontsize=14];
+R [label="R\nRecepción",pos="0,1!"];
+A [label="A\nPasillo A",pos="2,2!"];
+B [label="B\nPasillo B",pos="2,0!"];
+C [label="C\nPasillo C",pos="4,-1!"];
+P [label="P\nPicking",pos="4,1!"];
+E [label="E\nEmpaque",pos="6,1!"];
+D [label="D\nDespacho",pos="8,1!"];
+R -- A [label="4",color="#9aa6b2",penwidth=1];
+R -- B [label="2",color="#1e6bb8",penwidth=3];
+A -- B [label="1",color="#1e6bb8",penwidth=3];
+A -- P [label="3",color="#9aa6b2",penwidth=1];
+A -- E [label="5",color="#1e6bb8",penwidth=3];
+B -- P [label="7",color="#9aa6b2",penwidth=1];
+B -- C [label="3",color="#9aa6b2",penwidth=1];
+C -- P [label="2",color="#9aa6b2",penwidth=1];
+C -- E [label="4",color="#9aa6b2",penwidth=1];
+P -- E [label="2",color="#9aa6b2",penwidth=1];
+E -- D [label="3",color="#1e6bb8",penwidth=3];
+}

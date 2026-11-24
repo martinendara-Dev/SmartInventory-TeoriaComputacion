@@ -1,0 +1,21 @@
+Motor: automata.fsa.FSAStepByStateSimulator de JFLAP 7.1
+pedido | crpedt | Accept | OK
+pedido | crx | Accept | OK
+pedido | d | Reject | OK
+pedido | crd | Reject | OK
+pedido | cr | Reject | OK
+pedido | crpedtx | Reject | OK
+reserva | vcp | Accept | OK
+reserva | vcl | Accept | OK
+reserva | p | Reject | OK
+reserva | vp | Reject | OK
+reserva | vce | Accept | OK
+reserva | s | Accept | OK
+reserva | sp | Reject | OK
+compra | saec | Accept | OK
+compra | saeppc | Accept | OK
+compra | sre | Reject | OK
+compra | sec | Reject | OK
+compra | sr | Accept | OK
+compra | saep | Reject | OK
+19 secuencias correctas.
